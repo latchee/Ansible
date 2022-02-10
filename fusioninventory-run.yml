@@ -1,5 +1,5 @@
 ---
-- hosts: all!proxmox
+- hosts: all:!proxmox
   become: true  # sudo root
   gather_facts: false
 
