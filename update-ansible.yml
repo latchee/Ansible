@@ -1,0 +1,34 @@
+---
+- hosts: ansible
+  serial: 1     # one host at a time
+  become: yes  # sudo root
+
+  tasks:
+      - name: Update all packages on a Debian/Ubuntu
+        apt:
+            update_cache: yes
+            upgrade: yes
+        ignore_errors: yes
+        retries: 3
+        delay: 10
+      
+      - name: Reboot after updates
+        shell: sleep 10 && /sbin/shutdown -r now 'Rebooting box to update system libs' 
+        async: 300
+        poll: 0
+        ignore_errors: yes
+      
+      - name: Wait for system to become reachable again
+        wait_for_connection:
+            delay: 60
+            timeout: 300
+
+      - name: Apt autoremove
+        apt:
+            autoremove: yes
+        ignore_errors: yes
+
+      - name: Apt autoclean
+        apt:
+            autoclean: yes
+        ignore_errors: yes

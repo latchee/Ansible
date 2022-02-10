@@ -1,0 +1,26 @@
+---
+- hosts: Ansible
+  serial: 1     # one host at a time
+  become: true  # sudo root
+
+  tasks:
+      - name: Verify new update (optional)
+        command: uname -mrs
+        register: uname_result
+      - name: Display new kernel version
+        debug:
+            var: uname_result.stdout_lines
+
+      - name: Apt autoremove
+        apt:
+            autoremove: yes
+        ignore_errors: yes
+
+      - name: Apt autoclean
+        apt:
+            autoclean: yes
+
+      - name: Removes "Finalisation playbook" from crontab
+        cron:
+             name: "Finalisation playbook"
+             state: absent

@@ -1,0 +1,23 @@
+---
+- name: Send systemd-journald logs to rsyslog and configure log rotate
+  hosts: all
+  gather_facts: no
+  become: true
+
+  tasks:
+    - name: Send Journald logs to rsyslog and configure log rotate
+      blockinfile:
+          path: /etc/systemd/journald.conf 
+          backup: yes
+          state: present
+          block: |
+            Compress=true
+            MaxFileSec=1day
+            MaxRetentionSec=15day
+            ForwardToSyslog=true
+      notify:
+      - restart systemd-journald
+
+  handlers:
+    - name: restart systemd-journald
+      service: name=systemd-journald state=restarted

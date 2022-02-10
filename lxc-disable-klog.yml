@@ -1,0 +1,25 @@
+---
+- name: Disable klog in lxc
+  hosts: lxc
+  become: true  # sudo root
+
+  tasks:
+    - name: Replace klog line in rsyslog.conf 1
+      replace:
+        path: /etc/rsyslog.conf 
+        regexp: '^module\(load="imklog" permitnonkernelfacility="on"\)'
+        replace: '#module(load="imklog" permitnonkernelfacility="on")'
+      notify:
+      - restart rsyslog
+
+    - name: Replace klog line in rsyslog.conf 2
+      replace:
+        path: /etc/rsyslog.conf 
+        regexp: '^module\(load="imklog"\)'
+        replace: '#module(load="imklog")'
+      notify:
+      - restart rsyslog
+
+  handlers:
+    - name: restart rsyslog
+      service: name=rsyslog state=restarted

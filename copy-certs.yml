@@ -1,0 +1,85 @@
+---
+
+- hosts: OpenLDAP,bitwarden_rs,Mail
+  become: yes  # sudo root
+  gather_facts: no
+#  check_mode: yes
+
+  tasks:
+      - name: Copy CA and permission to OpenLDAP
+        when: inventory_hostname == 'OpenLDAP'
+        copy:
+          src: /home/ansible/certs/latchee.com.ca
+          dest: /etc/ldap/tls
+          owner: openldap
+          group: openldap
+          mode: '0444'
+
+      - name: Copy cert and permission to OpenLDAP
+        when: inventory_hostname == 'OpenLDAP'
+        copy:
+          src: /home/ansible/certs/latchee.com.crt
+          dest: /etc/ldap/tls
+          owner: openldap
+          group: openldap
+          mode: '0440'
+
+      - name: Copy key and permission to OpenLDAP
+        when: inventory_hostname == 'OpenLDAP'
+        copy:
+          src: /home/ansible/certs/latchee.com.key
+          dest: /etc/ldap/tls
+          owner: openldap
+          group: openldap
+          mode: '0440'
+
+      - name: Restart OpenLDAP
+        when: inventory_hostname == 'OpenLDAP'
+        service:
+          name: slapd
+          state: restarted
+
+      - name: Copy cert and permission to bitwarden_rs
+        when: inventory_hostname == 'bitwarden_rs'
+        copy:
+          src: /home/ansible/certs/latchee.com.crt
+          dest: /home/latchee/bitwarden_rs/target/release/data/certs
+          owner: latchee
+          group: admin
+          mode: '0400'
+
+      - name: Copy key and permission to bitwarden_rs
+        when: inventory_hostname == 'bitwarden_rs'
+        copy:
+          src: /home/ansible/certs/latchee.com.key
+          dest: /home/latchee/bitwarden_rs/target/release/data/certs
+          owner: latchee
+          group: admin
+          mode: '0400'
+
+      - name: Copy cert and permission to Mailserver
+        when: inventory_hostname == 'Mail'
+        copy:
+          src: /home/ansible/certs/latchee.com.fullchain
+          dest: /etc/ssl/certs
+          owner: root
+          group: root
+          mode: '0444'
+
+      - name: Copy key and permission to Mailserver
+        when: inventory_hostname == 'Mail'
+        copy:
+          src: /home/ansible/certs/latchee.com.key
+          dest: /etc/ssl/private
+          owner: root
+          group: root
+          mode: '0444'
+
+      - name: Restart Postfix and Dovecot
+        when: inventory_hostname == 'Mail'
+        service:
+          name: "{{ item }}"
+          state: restarted
+        with_items:
+          - postfix
+          - dovecot

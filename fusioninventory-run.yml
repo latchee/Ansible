@@ -1,0 +1,8 @@
+---
+- hosts: lxc:Ansible:mx2.latchee.com
+  become: true  # sudo root
+  gather_facts: false
+
+  tasks:
+      - name: Run FusionInventory
+        shell: /usr/bin/fusioninventory-agent -f

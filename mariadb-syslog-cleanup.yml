@@ -1,0 +1,17 @@
+---
+
+- hosts: MariaDB
+  gather_facts: no
+
+  tasks:
+    - name: Clean up messages older than 30 days
+      become: yes
+      shell: mysql -e "DELETE FROM SystemEvents WHERE ReceivedAt < date_add(current_date, interval -30 day)" Syslog
+
+    - name: Clean up debug older than 7 days
+      become: yes
+      shell: mysql -e "DELETE FROM SystemEvents WHERE Priority >= 7 and ReceivedAt < date_add(current_date, interval -7 day)" Syslog
+
+    - name: Optimize all databases
+      become: yes
+      shell: mariadb-check -o -h localhost -A

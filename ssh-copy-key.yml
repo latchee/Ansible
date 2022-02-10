@@ -1,0 +1,11 @@
+---
+- hosts: lxc
+  become: no
+  gather_facts: no
+
+  tasks:
+      - name: Copy SSH public key
+        authorized_key:
+          user: ansible
+          state: present
+          key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub')}}"

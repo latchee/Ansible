@@ -1,0 +1,29 @@
+---
+- hosts: Ansible
+  serial: 1     # one host at a time
+  become: yes  # sudo root
+
+  tasks:
+      - name: Update all packages on a Debian/Ubuntu
+        apt:
+            update_cache: yes
+            upgrade: yes
+        ignore_errors: yes
+        retries: 3
+        delay: 10
+      
+      - name: Create cron @reboot to start finalisation playbook
+        cron:
+            name: "Finalisation playbook"
+            special_time: reboot
+            job: "ansible-playbook /home/latchee/Ansible/update-ansible-finalisation.yml"
+      
+      - name: Reboot after updates
+        shell: sleep 10 && /sbin/shutdown -r now 'Rebooting to update system libs' 
+        ignore_errors: yes
+        async: 300
+        poll: 0
+        changed_when: true
+
+      - name: Ending playbook
+        meta: end_play

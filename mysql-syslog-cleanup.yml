@@ -1,0 +1,17 @@
+---
+
+- hosts: MySQL
+  gather_facts: no
+
+  tasks:
+    - name: Clean up messages older than 30 days
+      become: yes
+      shell: mysql -e "DELETE FROM SystemEvents WHERE ReceivedAt < date_add(current_date, interval -30 day)" Syslog
+
+    - name: Clean up debug and info older than 7 days
+      become: yes
+      shell: mysql -e "DELETE FROM SystemEvents WHERE Priority >= 5 and ReceivedAt < date_add(current_date, interval -7 day)" Syslog
+
+    - name: Optimize syslog db
+      become: yes
+      shell: mysqlcheck -o -v -h localhost Syslog; 

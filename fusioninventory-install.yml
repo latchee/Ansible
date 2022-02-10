@@ -1,0 +1,57 @@
+---
+- hosts: lxc:Ansible:mx2.latchee.com
+  become: true  # sudo root
+  gather_facts: false
+
+  tasks:
+      - name: Install required packages
+        apt: 
+          name: dmidecode,hwdata,ucf,hdparm,perl,libuniversal-require-perl,libwww-perl,libparse-edid-perl,libproc-daemon-perl,libfile-which-perl,libhttp-daemon-perl,libxml-treepp-perl,libyaml-perl,libnet-cups-perl,libnet-ip-perl,libdigest-sha-perl,libsocket-getaddrinfo-perl,libtext-template-perl,libxml-xpath-perl,libyaml-tiny-perl
+          state: present
+
+      - name: Download FusionInventory 2.6
+        get_url:
+          url: https://github.com/fusioninventory/fusioninventory-agent/releases/download/2.6/fusioninventory-agent_2.6-1_all.deb
+          dest: ~/fusioninventory-agent_2.6-1_all.deb
+
+      - name: Install FusionInventory
+        apt:
+          deb: ~/fusioninventory-agent_2.6-1_all.deb
+
+      - name: replace line to disable webserver
+        lineinfile: 
+          path: /etc/fusioninventory/agent.cfg
+          regexp: '^(.*)no-httpd = 0(.*)$' 
+          line: 'no-httpd = 1'
+          backrefs: yes
+
+      - name: replace line to add tag
+        lineinfile: 
+          path: /etc/fusioninventory/agent.cfg
+          regexp: '^tag = ' 
+          line: 'tag = Home'
+          backrefs: yes
+
+      - name: replace line to syslog
+        lineinfile: 
+          path: /etc/fusioninventory/agent.cfg
+          regexp: '^(.*)logger = stderr(.*)$' 
+          line: 'logger = syslog,stderr'
+          backrefs: yes
+
+      - name: Add server config to agent.cfg
+        lineinfile:
+          path: /etc/fusioninventory/agent.cfg
+          state: present
+          line: 'server = https://glpi.latchee.com/plugins/fusioninventory/'
+
+      - name: Stop fusioninventory-agent service
+        service: 
+          name: fusioninventory-agent 
+          state: stopped
+          enabled: no
+
+      - name: Delete installer
+        file:
+          path: ~/fusioninventory-agent_2.6-1_all.deb
+          state: absent
