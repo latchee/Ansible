@@ -1,5 +1,5 @@
 ---
-- hosts: lxc:Ansible:mx2.latchee.com
+- hosts: all!proxmox
   become: true  # sudo root
   gather_facts: false
 
