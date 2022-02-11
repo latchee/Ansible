@@ -6,5 +6,4 @@
   tasks:
     - name: Vacuum all databases
       become: yes
-      become_user: postgres
-      shell: vacuumdb -z -a
+      shell: sudo -u postgres vacuumdb -z -a
