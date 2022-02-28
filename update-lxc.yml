@@ -5,6 +5,9 @@
   gather_facts: false
 
   tasks:
+      - name: Working on machine
+        debug: var={{inventory_hostname}}
+
       - name: Update all packages on a Debian/Ubuntu
         apt:
             update_cache: yes
@@ -13,6 +16,8 @@
         ignore_unreachable: yes
         retries: 3
         delay: 10
+      
+      - debug: msg={{ apt.stdout.split('\n')[:-1] }}
       
       - name: Reboot after updates
         shell: sleep 10 && /sbin/shutdown -r now 'Rebooting box to update system libs' 
