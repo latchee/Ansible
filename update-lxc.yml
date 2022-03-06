@@ -1,23 +1,28 @@
 ---
 - hosts: lxc:oracle
-  serial: 1     # one host at a time
+  serial: 1    # one host at a time
   become: yes  # sudo root
   gather_facts: false
 
   tasks:
       - name: Working on machine
-        debug: var={{inventory_hostname}}
+        debug: var={{ inventory_hostname }}
 
       - name: Update all packages on a Debian/Ubuntu
         apt:
             update_cache: yes
             upgrade: yes
+            autoremove: yes
+            autoclean: yes
         ignore_errors: yes
         ignore_unreachable: yes
         retries: 3
         delay: 10
-      
-      - debug: msg={{ apt.stdout.split('\n')[:-1] }}
+      - name: List installed and updated packages
+        shell: grep -E "^$(date +%Y-%m-%d).+ (install|upgrade) " /var/log/dpkg.log |cut -d " " -f 3-5
+        register: result
+      - name: Show Output
+        debug: msg="{{ result.stdout_lines }}"
       
       - name: Reboot after updates
         shell: sleep 10 && /sbin/shutdown -r now 'Rebooting box to update system libs' 
@@ -30,15 +35,3 @@
         wait_for_connection:
             delay: 60
             timeout: 300
-
-      - name: Apt autoremove
-        apt:
-            autoremove: yes
-        ignore_errors: yes
-        ignore_unreachable: yes
-
-      - name: Apt autoclean
-        apt:
-            autoclean: yes
-        ignore_errors: yes
-        ignore_unreachable: yes
