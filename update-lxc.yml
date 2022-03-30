@@ -23,7 +23,7 @@
       
       - name: Reboot after updates
         when: inventory_hostname != 'Nextcloud'
-        shell: sleep 10 && /sbin/shutdown -r now 'Rebooting box to update system libs' 
+        shell: reboot
         async: 300
         poll: 0
         ignore_errors: yes
