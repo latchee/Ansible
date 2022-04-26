@@ -22,7 +22,7 @@
         debug: msg="{{ result.stdout_lines }}"
       
       - name: Reboot after updates
-        # when: inventory_hostname != 'Nextcloud'
+        when: inventory_hostname != 'Nextcloud'
         shell: reboot
         async: 300
         poll: 0
