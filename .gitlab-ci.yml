@@ -19,7 +19,7 @@ configure:
         - echo "===> Adding hosts for convenience..."
         - echo 'localhost' > /etc/ansible/hosts
     only:
-     changes: *.yml
+     changes: ping.yml
 
 execute_ping:
     stage: dry-run
