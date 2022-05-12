@@ -1,0 +1,28 @@
+stages:
+    - configure
+    - dry-run
+
+image: ubuntu:latest
+
+variables:
+    ANSIBLE_HOST_KEY_CHECKING: 'false'
+    ANSIBLE_FORCE_COLOR: 'true'
+
+configure:
+    stage: configure
+    script:
+        - apt-get update -q -y
+        - echo "===> Installing Ansible..."
+        - apt-get install -y ansible git openssh-server keychain python-pip sshpass openssh-client
+        - echo "===> Installing handy tools (not absolutely required)..."
+        - pip install --upgrade pycrypto pywinrm
+        - echo "===> Adding hosts for convenience..."
+        - echo 'localhost' > /etc/ansible/hosts
+    only:
+     changes: *.yml
+
+execute_ping:
+    stage: dry-run
+    script: ansible-playbook ping.yml --inventory hosts --limit local --check
+    only:
+     changes: ping.yml
