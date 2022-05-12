@@ -19,10 +19,12 @@ configure:
         - echo "===> Adding hosts for convenience..."
         - echo 'localhost' > /etc/ansible/hosts
     only:
-     changes: ping.yml
+     changes: 
+        - ping.yml
 
 execute_ping:
     stage: dry-run
     script: ansible-playbook ping.yml --inventory hosts --limit local --check
     only:
-     changes: ping.yml
+     changes:
+        - ping.yml
