@@ -21,13 +21,15 @@ configure:
         - apt-get install -y ansible git openssh-server keychain python-pip sshpass openssh-client
         - echo "===> Adding hosts for convenience..."
         - echo 'localhost' > /etc/ansible/hosts
-    only:
-     changes: 
-        - ping.yml
+#    only:
+#     changes: 
+#        - ping.yml
 
 execute_ping:
     stage: dry-run
-    script: ansible-playbook ping.yml --inventory hosts --limit local --check
-    only:
-     changes:
-        - ping.yml
+    script: 
+        - git clone https://gitlab.latchee.com/latchee/Ansible.git $CI_JOB_NAME
+        - ansible-playbook ping.yml --inventory hosts --check
+#    only:
+#     changes:
+#        - ping.yml
