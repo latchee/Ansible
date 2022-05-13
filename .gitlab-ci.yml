@@ -13,8 +13,6 @@ before_script:
     - dpkg-reconfigure --frontend noninteractive tzdata
     - echo "===> Installing Ansible..."
     - apt-get install -y ansible ansible-lint git python3
-    - echo "===> Adding hosts for convenience..."
-    - echo 'localhost' > /etc/ansible/hosts
     - git submodule update --init
     - ansible --version
     - ansible-lint --version
