@@ -12,6 +12,11 @@ configure:
     stage: configure
     script:
         - apt-get update -q -y
+        - echo "===> Installing and configuring tzdata"
+        - export DEBIAN_FRONTEND=noninteractive
+        - ln -fs /usr/share/zoneinfo/Pacific/Auckland /etc/localtime
+        - apt-get install -y tzdata
+        - dpkg-reconfigure --frontend noninteractive tzdata
         - echo "===> Installing Ansible..."
         - apt-get install -y ansible git openssh-server keychain python-pip sshpass openssh-client
         - echo "===> Installing handy tools (not absolutely required)..."
