@@ -1,26 +1,33 @@
-stages:
-    - configure
-    - dry-run
-
 image: ubuntu:latest
 
 variables:
     ANSIBLE_HOST_KEY_CHECKING: 'false'
     ANSIBLE_FORCE_COLOR: 'true'
 
-configure:
-    stage: configure
+before_script:
+    - apt-get update -q -y
+    - echo "===> Installing and configuring tzdata"
+    - export DEBIAN_FRONTEND=noninteractive
+    - ln -fs /usr/share/zoneinfo/Pacific/Auckland /etc/localtime
+    - apt-get install -y tzdata
+    - dpkg-reconfigure --frontend noninteractive tzdata
+    - echo "===> Installing Ansible..."
+    - apt-get install -y ansible ansible-lint git python3
+    - echo "===> Adding hosts for convenience..."
+    - echo 'localhost' > /etc/ansible/hosts
+    - git submodule update --init
+    - ansible --version
+    - ansible-lint --version
+
+stages:
+    - verify
+    - dry-run
+
+verify:
+    stage: verify
     script:
-        - apt-get update -q -y
-        - echo "===> Installing and configuring tzdata"
-        - export DEBIAN_FRONTEND=noninteractive
-        - ln -fs /usr/share/zoneinfo/Pacific/Auckland /etc/localtime
-        - apt-get install -y tzdata
-        - dpkg-reconfigure --frontend noninteractive tzdata
-        - echo "===> Installing Ansible..."
-        - apt-get install -y ansible git openssh-server keychain python-pip sshpass openssh-client
-        - echo "===> Adding hosts for convenience..."
-        - echo 'localhost' > /etc/ansible/hosts
+      - ansible-lint -v *.yml
+      - ansible-playbook --inventory inventory/production --syntax-check *.yml
 #    only:
 #     changes: 
 #        - ping.yml
@@ -28,7 +35,6 @@ configure:
 execute_ping:
     stage: dry-run
     script: 
-        - git clone https://gitlab.latchee.com/latchee/Ansible.git $CI_JOB_NAME
         - ansible-playbook ping.yml --inventory hosts --check
 #    only:
 #     changes:
