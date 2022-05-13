@@ -1,8 +1,0 @@
----
-
-- hosts: localhost
-  gather_facts: no
-
-  tasks:
-    name: current_working_directory
-        shell: pwd
