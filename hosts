@@ -1,0 +1,100 @@
+all:
+  hosts:
+    Ansible:
+      ansible_host: 192.168.1.213
+  children:
+    oracle:
+      hosts:
+        mx2.latchee.com:
+          ansible_host: 192.9.179.43
+      vars:
+        ansible_python_interpreter: '/usr/bin/env python3'
+        ansible_connection: ssh
+        ansible_ssh_user: $ORACLE_SSH_USER
+    lxc:
+      hosts:
+        MariaDB:
+          ansible_host: 192.168.1.105
+        Mail:
+          ansible_host: 192.168.1.201
+        docker01:
+          ansible_host: 192.168.1.101
+        docker02:
+          ansible_host: 192.168.1.102
+        Pterodactyl:
+          ansible_host: 192.168.1.122
+        Deluge:
+          ansible_host: 192.168.1.202
+        Nextcloud:
+          ansible_host: 192.168.1.209
+        OpenLDAP:
+          ansible_host: 192.168.1.215
+        Guacamole:
+          ansible_host: 192.168.1.206
+        #Virtualmin:
+        #  ansible_host: 192.168.1.199
+        LogAnalyzer:
+          ansible_host: 192.168.1.214
+        Lxde:
+          ansible_host: 192.168.1.117
+        #bitwarden_rs:
+        #  ansible_host: 192.168.1.118
+        Kodi:
+          ansible_host: 192.168.1.119
+        pbs:
+          ansible_host: 192.168.1.120
+        PostgreSQL: 
+          ansible_host: 192.168.1.107
+        paperless:
+          ansible_host: 192.168.1.112
+        onlyoffice:
+          ansible_host: 192.168.1.114
+        solr:
+          ansible_host: 192.168.1.121
+        influxdb:
+          ansible_host: 192.168.1.108
+        grafana:
+          ansible_host: 192.168.1.111
+        grocy:
+          ansible_host: 192.168.1.159
+        codeserver:
+          ansible_host: 192.168.1.116
+        gitlab:
+          ansible_host: 192.168.1.103
+      children:
+        web:
+          hosts:
+            Web-Minecraft:
+              ansible_host: 192.168.1.151
+            Web-Dolibarr:
+              ansible_host: 192.168.1.152
+            Web-GLPI:
+              ansible_host: 192.168.1.153
+            Web-TTRSS:
+              ansible_host: 192.168.1.154
+            Web-BenAndChloe:
+              ansible_host: 192.168.1.155
+            Web-Latchee-Com:
+              ansible_host: 192.168.1.156
+            Web-Blondeau:
+              ansible_host: 192.168.1.157
+      vars:
+        ansible_python_interpreter: '/usr/bin/env python3'
+        ansible_connection: ssh
+        ansible_ssh_user: $LXC_SSH_USER
+        ansible_ssh_pass: $LXC_SSH_PASS
+        ansible_become_pass: $LXC_SSH_PASS
+    proxmox:
+      hosts:
+        pve01:
+          ansible_host: 192.168.1.231
+        pve02:
+          ansible_host: 192.168.1.232
+        pve03:
+          ansible_host: 192.168.1.233
+      vars:
+        ansible_python_interpreter: '/usr/bin/env python3'
+        ansible_connection: ssh
+        ansible_ssh_user: $PVE_SSH_USER
+        ansible_ssh_pass: $PVE_SSH_PASS
+        ansible_become_pass: $PVE_SSH_PASS
