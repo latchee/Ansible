@@ -26,9 +26,7 @@ verify:
     script:
       - ansible-lint -v *.yml
       - ansible-playbook --inventory inventory/production --syntax-check *.yml
-#    only:
-#     changes: 
-#        - ping.yml
+    allow_failure: true
 
 execute_ping:
     stage: dry-run
