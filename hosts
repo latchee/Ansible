@@ -61,6 +61,12 @@ all:
           ansible_host: 192.168.1.116
         gitlab:
           ansible_host: 192.168.1.103
+      vars:
+        ansible_python_interpreter: '/usr/bin/env python3'
+        ansible_connection: ssh
+        ansible_ssh_user: $LXC_SSH_USER
+        ansible_ssh_pass: $LXC_SSH_PASS
+        ansible_become_pass: $LXC_SSH_PASS
       children:
         web:
           hosts:
@@ -78,12 +84,6 @@ all:
               ansible_host: 192.168.1.156
             Web-Blondeau:
               ansible_host: 192.168.1.157
-      vars:
-        ansible_python_interpreter: '/usr/bin/env python3'
-        ansible_connection: ssh
-        ansible_ssh_user: $LXC_SSH_USER
-        ansible_ssh_pass: $LXC_SSH_PASS
-        ansible_become_pass: $LXC_SSH_PASS
     proxmox:
       hosts:
         pve01:
