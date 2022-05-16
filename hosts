@@ -1,7 +1,5 @@
 all:
   hosts:
-    Ansible:
-      ansible_host: 192.168.1.213
   children:
     oracle:
       hosts:
@@ -17,6 +15,8 @@ all:
           3839
     lxc:
       hosts:
+        Ansible:
+          ansible_host: 192.168.1.213
         MariaDB:
           ansible_host: 192.168.1.105
         Mail:
