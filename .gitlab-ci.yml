@@ -1,0 +1,63 @@
+image: ubuntu:latest
+
+variables:
+    ANSIBLE_HOST_KEY_CHECKING: 'false'
+    ANSIBLE_FORCE_COLOR: 'true'
+    ANSIBLE_PYTHON_INTERPRETER: '/usr/bin/env python3'
+    ANSIBLE_CONNECTION: ssh
+    ANSIBLE_VAULT_PASS: $ANSIBLE_VAULT_PASS
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+before_script:
+    - apt-get update -q -y
+    - echo "===> Installing and configuring tzdata"
+    - export DEBIAN_FRONTEND=noninteractive
+    - ln -fs /usr/share/zoneinfo/Pacific/Auckland /etc/localtime
+    - apt-get install -y tzdata
+    - dpkg-reconfigure --frontend noninteractive tzdata
+    - echo "===> Installing Ansible..."
+    - apt-get install -y ansible ansible-lint git python3 sshpass curl
+    - git submodule update --init
+    - ansible --version
+    - ansible-lint --version
+
+stages:
+    - Build
+    - Test
+    - Production
+
+verify:
+    stage: Build
+    script:
+      - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+      - ansible-lint -v *.yml
+      - ansible-playbook --inventory hosts --syntax-check *.yml
+
+execute_test_ping:
+    stage: Test
+    script: 
+        - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+        - echo $ANSIBLE_VAULT_PASS > vault_pass.txt
+        - ansible-playbook install_ssh_key.yml --vault-password-file vault_pass.txt
+        - ansible-playbook ping.yml --inventory hosts --vault-password-file vault_pass.txt
+    rules:
+    - if: $CI_COMMIT_BRANCH != "$CI_DEFAULT_BRANCH"
+
+execute_ping:
+    stage: Production
+    script: 
+        - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+        - echo $ANSIBLE_VAULT_PASS > vault_pass.txt
+        - ansible-playbook install_ssh_key.yml --vault-password-file vault_pass.txt
+        - ansible-playbook ping.yml --inventory hosts --vault-password-file vault_pass.txt
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+        when: never
+      - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
