@@ -35,14 +35,14 @@ stages:
 verify:
     stage: Build
     script:
-        - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+        - curl --remote-name-all https://gitlab.latchee.com/ansible/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
         - ansible-lint -v *.yml
         - ansible-playbook --inventory hosts --syntax-check *.yml
 
 execute_test_ping:
     stage: Test
     script: 
-        - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+        - curl --remote-name-all https://gitlab.latchee.com/ansible/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
         - echo $ANSIBLE_VAULT_PASS > vault_pass.txt
         - ansible-playbook install_ssh_key.yml --vault-password-file vault_pass.txt
         - ansible-playbook ping.yml --inventory hosts --vault-password-file vault_pass.txt --check
@@ -56,7 +56,7 @@ execute_test_ping:
 execute_ping:
     stage: Production
     script: 
-        - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+        - curl --remote-name-all https://gitlab.latchee.com/ansible/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
         - echo $ANSIBLE_VAULT_PASS > vault_pass.txt
         - ansible-playbook install_ssh_key.yml --vault-password-file vault_pass.txt
         - ansible-playbook ping.yml --inventory hosts --vault-password-file vault_pass.txt
