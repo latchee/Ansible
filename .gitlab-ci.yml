@@ -9,10 +9,10 @@ variables:
 
 workflow:
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
-      when: never
-    - if: $CI_COMMIT_BRANCH
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+        when: never
+      - if: $CI_COMMIT_BRANCH
 
 before_script:
     - apt-get update -q -y
@@ -35,9 +35,9 @@ stages:
 verify:
     stage: Build
     script:
-      - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
-      - ansible-lint -v *.yml
-      - ansible-playbook --inventory hosts --syntax-check *.yml
+        - curl --remote-name-all https://gitlab.latchee.com/latchee/Ansible/-/raw/main/{hosts,id_rsa.crypt,install_ssh_key.yml}
+        - ansible-lint -v *.yml
+        - ansible-playbook --inventory hosts --syntax-check *.yml
 
 execute_test_ping:
     stage: Test
@@ -47,7 +47,11 @@ execute_test_ping:
         - ansible-playbook install_ssh_key.yml --vault-password-file vault_pass.txt
         - ansible-playbook ping.yml --inventory hosts --vault-password-file vault_pass.txt --check
     rules:
-    - if: $CI_COMMIT_BRANCH != "$CI_DEFAULT_BRANCH"
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+          when: never
+        - if: $CI_PIPELINE_SOURCE == "web"
+          when: never
+        - if: $CI_COMMIT_BRANCH != "$CI_DEFAULT_BRANCH"
 
 execute_ping:
     stage: Production
@@ -57,7 +61,7 @@ execute_ping:
         - ansible-playbook install_ssh_key.yml --vault-password-file vault_pass.txt
         - ansible-playbook ping.yml --inventory hosts --vault-password-file vault_pass.txt
     rules:
-      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-        when: never
-      - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+          when: never
+        - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+        - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
