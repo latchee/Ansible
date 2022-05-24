@@ -21,10 +21,6 @@ all:
           ansible_host: 192.168.1.105
         Mail:
           ansible_host: 192.168.1.201
-        docker01:
-          ansible_host: 192.168.1.101
-        docker02:
-          ansible_host: 192.168.1.102
         Pterodactyl:
           ansible_host: 192.168.1.122
         Deluge:
@@ -106,6 +102,12 @@ all:
               ansible_host: 192.168.1.156
             Web-Blondeau:
               ansible_host: 192.168.1.157
+        docker:
+          hosts:
+            docker01:
+              ansible_host: 192.168.1.101
+            docker02:
+              ansible_host: 192.168.1.102
     proxmox:
       hosts:
         pve01:
