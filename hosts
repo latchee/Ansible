@@ -45,8 +45,8 @@ all:
           ansible_host: 192.168.1.120
         PostgreSQL: 
           ansible_host: 192.168.1.107
-        paperless:
-          ansible_host: 192.168.1.112
+        #paperless:
+        #  ansible_host: 192.168.1.112
         onlyoffice:
           ansible_host: 192.168.1.114
         solr:
