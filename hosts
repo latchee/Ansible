@@ -61,6 +61,8 @@ all:
           ansible_host: 192.168.1.116
         gitlab:
           ansible_host: 192.168.1.103
+        raspberrypi3:
+          ansible_host: 192.168.1.72
       vars:
         ansible_ssh_user: !vault |
           $ANSIBLE_VAULT;1.1;AES256
