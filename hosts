@@ -31,22 +31,16 @@ all:
           ansible_host: 192.168.1.215
         Guacamole:
           ansible_host: 192.168.1.206
-        #Virtualmin:
-        #  ansible_host: 192.168.1.199
         LogAnalyzer:
           ansible_host: 192.168.1.214
         Lxde:
           ansible_host: 192.168.1.117
-        #bitwarden_rs:
-        #  ansible_host: 192.168.1.118
         Kodi:
           ansible_host: 192.168.1.119
         pbs:
           ansible_host: 192.168.1.120
         PostgreSQL: 
           ansible_host: 192.168.1.107
-        #paperless:
-        #  ansible_host: 192.168.1.112
         onlyoffice:
           ansible_host: 192.168.1.114
         solr:
@@ -61,8 +55,8 @@ all:
           ansible_host: 192.168.1.116
         gitlab:
           ansible_host: 192.168.1.103
-        #raspberrypi3:
-        #  ansible_host: 192.168.1.72
+        vmangos:
+          ansible_host: 192.168.1.126
       vars:
         ansible_ssh_user: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -104,6 +98,8 @@ all:
               ansible_host: 192.168.1.156
             Web-Blondeau:
               ansible_host: 192.168.1.157
+            yesilcms:
+              ansible_host: 192.168.1.127
         docker:
           hosts:
             docker01:
@@ -112,13 +108,11 @@ all:
               ansible_host: 192.168.1.102
     proxmox:
       hosts:
-        #pve01:
-        #  ansible_host: 192.168.1.231
         pve02:
           ansible_host: 192.168.1.232
-        pve03:
-          ansible_host: 192.168.1.233
         pve04:
+          ansible_host: 192.168.1.234
+        pve05:
           ansible_host: 192.168.1.234
       vars:
         ansible_ssh_user: !vault |
