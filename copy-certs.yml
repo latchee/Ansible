@@ -1,6 +1,6 @@
 ---
 
-- hosts: OpenLDAP,bitwarden_rs,Mail
+- hosts: OpenLDAP,Mail
   become: yes  # sudo root
   gather_facts: no
 #  check_mode: yes
@@ -38,24 +38,6 @@
         service:
           name: slapd
           state: restarted
-
-      - name: Copy cert and permission to bitwarden_rs
-        when: inventory_hostname == 'bitwarden_rs'
-        copy:
-          src: /home/ansible/certs/latchee.com.crt
-          dest: /home/latchee/bitwarden_rs/target/release/data/certs
-          owner: latchee
-          group: admin
-          mode: '0400'
-
-      - name: Copy key and permission to bitwarden_rs
-        when: inventory_hostname == 'bitwarden_rs'
-        copy:
-          src: /home/ansible/certs/latchee.com.key
-          dest: /home/latchee/bitwarden_rs/target/release/data/certs
-          owner: latchee
-          group: admin
-          mode: '0400'
 
       - name: Copy cert and permission to Mailserver
         when: inventory_hostname == 'Mail'
