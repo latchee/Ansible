@@ -139,7 +139,7 @@ all:
 router:
   hosts:
     opnsense:
-      ansible_host: 192.168.1.126
+      ansible_host: 192.168.1.254
   vars:
     ansible_ssh_user: !vault |
       $ANSIBLE_VAULT;1.1;AES256
