@@ -57,6 +57,8 @@ all:
           ansible_host: 192.168.1.103
         vmangos:
           ansible_host: 192.168.1.126
+        LMS:
+          ansible_host: 192.168.1.118
       vars:
         ansible_ssh_user: !vault |
           $ANSIBLE_VAULT;1.1;AES256
