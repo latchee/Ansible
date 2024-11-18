@@ -29,10 +29,6 @@ all:
           ansible_host: 192.168.1.209
         OpenLDAP:
           ansible_host: 192.168.1.215
-        Guacamole:
-          ansible_host: 192.168.1.206
-        LogAnalyzer:
-          ansible_host: 192.168.1.214
         Lxde:
           ansible_host: 192.168.1.117
         Kodi:
