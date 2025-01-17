@@ -31,8 +31,8 @@ all:
           ansible_host: 192.168.1.215
         Lxde:
           ansible_host: 192.168.1.117
-        Kodi:
-          ansible_host: 192.168.1.119
+        jellyfin:
+          ansible_host: 192.168.1.109
         pbs:
           ansible_host: 192.168.1.120
         PostgreSQL: 
