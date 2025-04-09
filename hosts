@@ -90,8 +90,8 @@ all:
               ansible_host: 192.168.1.152
             Web-GLPI:
               ansible_host: 192.168.1.153
-            Web-TTRSS:
-              ansible_host: 192.168.1.154
+            #Web-TTRSS:
+            #  ansible_host: 192.168.1.154
             Web-BenAndChloe:
               ansible_host: 192.168.1.155
             Web-Latchee-Com:
